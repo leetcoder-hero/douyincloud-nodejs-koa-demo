@@ -37,7 +37,10 @@ initService().then(async () => {
 
     const router = new Router();
     router.get('/', async ctx => {
-        const openid = ctx.header['X-TT-OPENID'];
+        console.log("ctx.header", ctx.header)
+        console.log("ctx.headers", ctx.headers)
+        const openid = ctx.header['X-TT-Openid'];
+        console.log("openid",openid)
         const res = await  db.collection("couple").add({
             "meal": openid,
            }
