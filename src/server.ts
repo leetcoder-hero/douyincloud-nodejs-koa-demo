@@ -4,6 +4,9 @@ import Router from '@koa/router'
 import Redis from 'ioredis';
 import mongoose from 'mongoose';
 import assert from "assert";
+import { dySDK } from "@open-dy/node-server-sdk";
+const db = dySDK.database();
+const todosCollection = db.collection("todos");
 
 // 初始化各服务的连接 redis, mongo
 async function initService() {
@@ -33,8 +36,15 @@ initService().then(async () => {
     const app = new Koa();
 
     const router = new Router();
-    router.get('/', ctx => {
-        ctx.body = `Nodejs koa demo project`;
+    router.get('/', async ctx => {
+        const openid = ctx.header['X-TT-OPENID'];
+        const res = await  db.collection("couple").add({
+            "meal": openid,
+           }
+        )
+
+
+        ctx.body = openid;
     }).get('/api/get_data_from_redis', async(ctx) => {
         ctx.body = {
             success: true,

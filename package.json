@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@koa/router": "^10.0.0",
+    "@open-dy/node-server-sdk": "^1.0.0",
     "ioredis": "^5.2.3",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
