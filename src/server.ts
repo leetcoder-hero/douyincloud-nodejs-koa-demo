@@ -39,12 +39,14 @@ initService().then(async () => {
     router.get('/', async ctx => {
         const openid = ctx.header['x-tt-openid'];
         console.log("openid",openid)
-        const res = await  db.collection("couple").add({
-            "meal": openid,
-           }
-        )
-
-
+        try{
+            const res = await  db.collection("couple").add({
+                "meal": openid,
+               }
+            )
+        } catch(error){
+            console.error(error);
+        }
         ctx.body = openid;
     }).get('/api/get_data_from_redis', async(ctx) => {
         ctx.body = {
