@@ -16,7 +16,7 @@ router.get('/get-info', async function (ctx, next) {
   const res = await usersDB.where({ openId: openId }).get();
   console.log("res", res)
   ctx.body = {
-    data: res[0],
+    data: res.data[0],
     success: true,
   }
 })
