@@ -12,16 +12,17 @@ router.get('/openId', async function (ctx, next) {
 })
 
 router.get('/get-info', async function (ctx, next) {
+  const openId = ctx.header['x-tt-openid'] ;
+  const res = await usersDB.where({ openId: openId }).get();
+  console.log("res", res)
   ctx.body = {
-    data: {},
+    data: res[0],
     success: true,
   }
 })
 router.post('/set-info', async function (ctx, next) {
-  const openId = ctx.header['x-tt-openid'] || "123";
+  const openId = ctx.header['x-tt-openid'];
   const {nickName, avatarUrl, gender, city, province} = ctx.request.body;
-  console.log("set-info", nickName, avatarUrl, gender, city, province)
-  console.log(await usersDB.get())
   try {
     const res = await usersDB.add({
       openId,
