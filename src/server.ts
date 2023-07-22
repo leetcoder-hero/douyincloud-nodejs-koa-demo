@@ -1,5 +1,6 @@
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
+const json = require('koa-json')
 import Router from '@koa/router'
 import Redis from 'ioredis';
 import mongoose from 'mongoose';
@@ -7,6 +8,8 @@ import assert from "assert";
 import { dySDK } from "@open-dy/node-server-sdk";
 const db = dySDK.database();
 const todosCollection = db.collection("todos");
+const index = require('./routes/index')
+const users = require('./routes/users')
 
 // 初始化各服务的连接 redis, mongo
 async function initService() {
@@ -32,47 +35,13 @@ async function initService() {
 }
 
 initService().then(async () => {
-
     const app = new Koa();
-
-    const router = new Router();
-    router.get('/', async ctx => {
-        const openid = ctx.header['x-tt-openid'];
-        console.log("openid",openid)
-        try{
-            const res = await  db.collection("couple").add({
-                "meal": openid,
-               }
-            )
-        } catch(error){
-            console.error(error);
-        }
-        ctx.body = openid;
-    }).get('/api/get_data_from_redis', async(ctx) => {
-        ctx.body = {
-            success: true,
-            data: 123,
-        }
-    }).post('/api/set_data_to_redis', async(ctx) => {
-        ctx.body = {
-            success: true,
-            data: 123,
-        }
-    }).get('/api/get_data_from_mongodb', async(ctx) => {
-        ctx.body = {
-            success: true,
-            data: 123,
-        }
-    }).post('/api/set_data_to_mongodb', async(ctx) => {
-        const name = ctx.query.name as string;
-        ctx.body = {
-            success: true,
-            data: 123,
-        }
-    });
-
-    app.use(bodyParser());
-    app.use(router.routes());
+    app.use(bodyParser({
+        enableTypes:['json', 'form', 'text']
+    }));
+    app.use(json())
+    app.use(index.routes());
+    app.use(users.routes());
 
     const PORT = 8000;
     app.listen(PORT, () => {
