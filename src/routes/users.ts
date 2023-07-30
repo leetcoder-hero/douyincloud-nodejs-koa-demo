@@ -29,13 +29,17 @@ router.post('/set-info', async function (ctx, next) {
       nickName, avatarUrl, gender, city, province
     })
     ctx.body = {
-      data: "success",
+      data: {
+        openId,
+      },
       success: true,
     }
     console.log("res", res)
   } catch (error) {
     ctx.body = {
-      data: "failed",
+      data: {
+        openId,
+      },
       success: false,
     }
     console.log("err", error)
