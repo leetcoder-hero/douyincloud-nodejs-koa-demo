@@ -14,6 +14,14 @@ router.get('/openId', async function (ctx, next) {
 router.get('/get-info', async function (ctx, next) {
   const openId = ctx.header['x-tt-openid'] ;
   console.log("header",ctx.header )
+  if(!openId){
+    console.log("未传入openId");
+    ctx.body = {
+      data: null,
+      success: false,
+    }
+    return 
+  }
   const res = await usersDB.where({ openId: openId }).get();
   console.log("res", res)
   ctx.body = {
