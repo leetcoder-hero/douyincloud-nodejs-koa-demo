@@ -10,6 +10,7 @@ const db = dySDK.database();
 const todosCollection = db.collection("todos");
 const index = require('./routes/index')
 const users = require('./routes/users')
+const goods = require('./routes/goods')
 
 // 初始化各服务的连接 redis, mongo
 async function initService() {
@@ -42,6 +43,7 @@ initService().then(async () => {
     app.use(json())
     app.use(index.routes());
     app.use(users.routes());
+    app.use(goods.routes());
 
     const PORT = 8000;
     app.listen(PORT, () => {
