@@ -10,7 +10,9 @@ router.prefix('/goods')
 //   return good;
 // }
 router.get('/home-list', async function (ctx, next) {
+  console.time("home-list")
   const res = await goodsDB.get();
+  console.timeEnd("home-list")
   ctx.body = {
     data: res.data,
     success: true,
