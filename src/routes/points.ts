@@ -42,7 +42,7 @@ router.get('/daily-add', async function (ctx, next) {
   } else {
     await collection.add({
       openId,
-      point: 1,
+      points: 1,
       type: "daily",
       time: Date.now(), 
     })
