@@ -1,14 +1,16 @@
 const router = require('koa-router')()
-const tcb_app = require("../utils/tcb");
-const db = tcb_app.database()
-const _ = db.command
+import { dySDK } from "@open-dy/node-server-sdk";
+const db = dySDK.database();
 router.prefix('/points')
+const pointsActiveDB =  db.collection("points_actives");
 const collection =  db.collection("points");
-router.get('/add', async function (ctx, next) {
-  const user_id = ctx.user_id;
-  const pointRes = await collection.where({
-    user_id: _.eq(user_id),
-    type: _.eq( "daily"),
+
+
+router.get('/daily-add', async function (ctx, next) {
+  const openId = ctx.header['x-tt-openid'] ;
+  const pointRes = await pointsActiveDB.where({
+    openId: openId,
+    type:  "daily",
   }).get();
   if(pointRes && pointRes.data[0]){
     const time = new Date(pointRes.data[0].time);
@@ -22,12 +24,30 @@ router.get('/add', async function (ctx, next) {
       return ;
     }
   }
-  const res = await collection.add({
-    user_id,
+  await pointsActiveDB.add({
+    openId,
     points:1,
     type: "daily",
     time: Date.now(), 
   })
+  const res = await collection.where({ openId: openId }).get();
+  if(res.data[0]){
+    const points = res.data[0].points || 0;
+    await collection.where({ openId: openId }).update({
+      openId,
+      points: points + 1,
+      type: "daily",
+      time: Date.now(), 
+    })
+  } else {
+    await collection.add({
+      openId,
+      point: 1,
+      type: "daily",
+      time: Date.now(), 
+    })
+  }
+
 //   const { userInfo } = await auth.getEndUserInfo();
 //   console.log("userInfo", userInfo)
 //   const uuid = userInfo.uuid;
@@ -39,10 +59,10 @@ router.get('/add', async function (ctx, next) {
   }
 })
 router.get('/query-tody', async function (ctx, next) {
-  const user_id = ctx.user_id;
-  const pointRes = await collection.where({
-    user_id: _.eq(user_id),
-    type: _.eq( "daily"),
+  const openId = ctx.header['x-tt-openid'] ;
+  const pointRes = await pointsActiveDB.where({
+    openId: openId,
+    type: "daily",
   }).get();
   if(pointRes && pointRes.data[0]){
     const time = new Date(pointRes.data[0].time);
@@ -62,10 +82,10 @@ router.get('/query-tody', async function (ctx, next) {
   } 
 })
 router.get('/query', async function (ctx, next) {
-    const user_id = ctx.user_id;
+    const openId = ctx.header['x-tt-openid'] ;
 
     const res = await  collection.where({
-        user_id
+      openId
     }).get()
     let points = 0;
     if(res.data &&  res.data[0] && res.data[0].points){
