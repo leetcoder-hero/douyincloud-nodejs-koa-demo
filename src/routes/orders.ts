@@ -63,10 +63,8 @@ router.post('/point-pay', async function (ctx, next) {
     if(res_point <0){
       throw Error("积分不足") 
     }
-    console.log(await db.collection("points").where({ openId: openId }).get());
-    const pointsUpdate = await db.collection("points").where({ openId: openId })
-    .update({
-      points: res_point
+    const pointsUpdate = await db.collection("points").where({ openId: openId }).update({
+      points: 1
     });
     console.log("pointsUpdate", pointsUpdate)
     if(pointsUpdate.updated == 0){
