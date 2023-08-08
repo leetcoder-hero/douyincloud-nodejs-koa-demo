@@ -47,28 +47,27 @@ router.post('/point-pay', async function (ctx, next) {
       throw Error("未找到商品") 
     }
     const goods_point = good.data[0].point;
-    const pointsRes = await db.collection("points").where({
-      openId: openId
-    }).get();
-    if( !(pointsRes.data && pointsRes.data[0]) ){
-      throw Error("积分不足") 
-    }
-    const hasPoints = pointsRes.data[0].points;
-    console.log("hasPoints", hasPoints, typeof hasPoints)
-    console.log("goods_points", goods_point,  typeof goods_point)
-    if(typeof hasPoints !=='number' || typeof goods_point !== "number"){
-      throw Error("积分不足") 
-    }
-    const res_point = Number(hasPoints - goods_point);
-    if(res_point <0){
-      throw Error("积分不足") 
-    }
-    const pointsUpdate = await db.collection("points").where({ openId: openId }).update({
-      points: 1
-    });
-    console.log("pointsUpdate", pointsUpdate)
-    if(pointsUpdate.updated == 0){
-      throw Error("积分不足") 
+    if(goods_point !== 0){
+      const pointsRes = await db.collection("points").where({
+        openId: openId
+      }).get();
+      if( !(pointsRes.data && pointsRes.data[0]) ){
+        throw Error("积分不足") 
+      }
+      const hasPoints = pointsRes.data[0].points;
+      if(typeof hasPoints !=='number' || typeof goods_point !== "number"){
+        throw Error("积分不足") 
+      }
+      const res_point = Number(hasPoints - goods_point);
+      if(res_point <0){
+        throw Error("积分不足") 
+      }
+      const pointsUpdate = await db.collection("points").where({ openId: openId }).update({
+        points: res_point
+      });
+      if(pointsUpdate.updated == 0){
+        throw Error("积分不足") 
+      }
     }
     const res = await collection.add({
       openId,
