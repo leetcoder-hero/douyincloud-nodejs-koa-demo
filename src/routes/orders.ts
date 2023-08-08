@@ -46,7 +46,7 @@ router.post('/point-pay', async function (ctx, next) {
     if( !(good.data && good.data[0]) ){
       throw Error("未找到商品") 
     }
-    const goods_points = good.data[0].points;
+    const goods_point = good.data[0].point;
     const pointsRes = await db.collection("points").where({
       openId: openId
     }).get();
@@ -54,7 +54,12 @@ router.post('/point-pay', async function (ctx, next) {
       throw Error("积分不足") 
     }
     const hasPoints = pointsRes.data[0].points;
-    const res_point = hasPoints - goods_points;
+    console.log("hasPoints", hasPoints, typeof hasPoints)
+    console.log("goods_points", goods_point,  typeof hasPoints)
+    if(typeof hasPoints !=='number' || typeof goods_point !== "number"){
+      throw Error("积分不足") 
+    }
+    const res_point = Number(hasPoints - goods_point);
     if(res_point <0){
       throw Error("积分不足") 
     }
@@ -69,7 +74,7 @@ router.post('/point-pay', async function (ctx, next) {
       openId,
       create_time: time,
       goods_id,
-      type: "buy",
+      type: "point-buy",
     })
     if( !res.id ){ 
       throw Error("兑换失败") 

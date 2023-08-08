@@ -13,7 +13,8 @@ router.get('/daily-add', async function (ctx, next) {
     type:  "daily",
   }).get();
   if(pointRes && pointRes.data[0]){
-    const time = new Date(pointRes.data[0].time);
+    const newest = pointRes.data.sort((a,b) => b.time - a.time);
+    const time = new Date(newest[0].time);
     const now = new Date();
     if(time.getFullYear() === now.getFullYear()  && time.getMonth() === now.getMonth() && time.getDate() === now.getDate()){
       // 今天已经签过到了
@@ -58,26 +59,28 @@ router.get('/daily-add', async function (ctx, next) {
       success: true,
   }
 })
-router.get('/query-tody', async function (ctx, next) {
+router.get('/query-today', async function (ctx, next) {
   const openId = ctx.header['x-tt-openid'] ;
   const pointRes = await pointsActiveDB.where({
     openId: openId,
     type: "daily",
   }).get();
+  console.log("query-today", pointRes)
   if(pointRes && pointRes.data[0]){
-    const time = new Date(pointRes.data[0].time);
+    const newest = pointRes.data.sort((a,b) => b.time - a.time);
+    const time = new Date(newest[0].time);
     const now = new Date();
     if(time.getFullYear() === now.getFullYear()  && time.getMonth() === now.getMonth() && time.getDate() === now.getDate()){
       // 今天已经签过到了
       ctx.body = {
-        data: 'tody-has',
+        data: 'today-has',
         success: false,
       }
       return ;
     }
   }
    ctx.body = {
-      data: "tody-not",
+      data: "today-not",
       success: true,
   } 
 })
