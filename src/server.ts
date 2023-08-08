@@ -12,6 +12,7 @@ const index = require('./routes/index')
 const users = require('./routes/users')
 const goods = require('./routes/goods')
 const points = require('./routes/points')
+const orders = require('./routes/orders')
 
 // 初始化各服务的连接 redis, mongo
 async function initService() {
@@ -46,6 +47,7 @@ initService().then(async () => {
     app.use(users.routes());
     app.use(goods.routes());
     app.use(points.routes());
+    app.use(orders.routes());
     const PORT = 8000;
     app.listen(PORT, () => {
         console.log(`Server running on port ${PORT}`);
