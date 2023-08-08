@@ -81,6 +81,7 @@ router.post('/point-pay', async function (ctx, next) {
       success: true,
     }
   }catch(err){
+    console.log("err",err)
     ctx.body = {
       data: { err: err},
       success: false,
