@@ -55,7 +55,7 @@ router.post('/point-pay', async function (ctx, next) {
     }
     const hasPoints = pointsRes.data[0].points;
     console.log("hasPoints", hasPoints, typeof hasPoints)
-    console.log("goods_points", goods_point,  typeof hasPoints)
+    console.log("goods_points", goods_point,  typeof goods_point)
     if(typeof hasPoints !=='number' || typeof goods_point !== "number"){
       throw Error("积分不足") 
     }
@@ -67,7 +67,8 @@ router.post('/point-pay', async function (ctx, next) {
     .update({
       points: res_point
     });
-    if(pointsUpdate.updated == 0){
+    console.log("pointsUpdate", pointsUpdate)
+    if(pointsUpdate.data == 0){
       throw Error("积分不足") 
     }
     const res = await collection.add({
