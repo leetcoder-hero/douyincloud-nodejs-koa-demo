@@ -42,9 +42,7 @@ router.post('/point-pay', async function (ctx, next) {
     }
     //todo: 检查goods_id是否是这个用户创建的
     const time = Date.now();
-    const good = await db.collection("goods").where({
-      _id: goods_id
-    }).get();
+    const good = await db.collection("goods").doc(goods_id).get();
     if( !(good.data && good.data[0]) ){
       throw Error("未找到商品") 
     }
@@ -83,7 +81,7 @@ router.post('/point-pay', async function (ctx, next) {
   }catch(err){
     console.log("err",err)
     ctx.body = {
-      data: { err: err},
+      data: { err: err.toString()},
       success: false,
     } 
   }
