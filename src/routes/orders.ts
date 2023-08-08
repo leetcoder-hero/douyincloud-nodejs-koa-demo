@@ -68,7 +68,7 @@ router.post('/point-pay', async function (ctx, next) {
       points: res_point
     });
     console.log("pointsUpdate", pointsUpdate)
-    if(pointsUpdate.data == 0){
+    if(pointsUpdate.updated == 0){
       throw Error("积分不足") 
     }
     const res = await collection.add({
